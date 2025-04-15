@@ -1,0 +1,15 @@
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 'admin123'
+      MYSQL_DATABASE: 'flask-crud'
+      MYSQL_ROOT_PASSWORD: 'admin123'
+    ports:
+      - "3307:3306"  # mapeando 3307 na máquina host para 3306 no container
+    expose:
+      - '3306'
+    volumes:
+      - /home/rafnaves/estudos/mysql
