@@ -1,0 +1,11 @@
+- Registro de refeição X
+    - Nome
+    - Descrição
+    - Data e Hora
+    - Está ou não dentro da dieta
+
+- Edição de refeição
+- Deleção de refeição
+- Listagem de refeições
+- Vizualizar uma única refeição
+- As informações devem ser salvas em um banco de dados

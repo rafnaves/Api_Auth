@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
-from models.user import User
+from models.user import User, Meal
 from database import db
+from datetime import datetime
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 import bcrypt
 
@@ -100,10 +101,55 @@ def delete_user(id_user):
         db.session.commit()
         return jsonify({"message": f"Usuario {id_user} deletado com sucesso"})
 
-@app.route('/hello_world', methods=['GET'])
-def hello_world():
-    return "Hello World"
 
+@app.route('/new_meal', methods=['POST'])
+@login_required
+def add_meal():
+    data = request.get_json()
+    
+    try:
+        name = data['name']
+        description = data['description']
+        date_str = data['date']  
+        dentro_da_dieta = data['dentro_da_dieta']
+
+        # Convertendo string para objeto de data
+        date = datetime.strptime(date_str, '%Y-%m-%d').date()
+
+        # Criando e associando a refeição ao usuário logado
+        new_meal = Meal(
+            name=name,
+            description=description,
+            date=date,
+            dentro_da_dieta=dentro_da_dieta,
+            user=current_user
+        )
+
+        db.session.add(new_meal)
+        db.session.commit()
+
+        return jsonify({'message': 'Refeição adicionada com sucesso!'}), 201
+
+    except Exception as e:
+        return jsonify({'erro, faltou cadastrar': str(e)}), 400
+
+@app.route('/edit_meal/<int:meal_id>', methods=['PUT'])
+@login_required
+def edit_meal(meal_id):
+    data = request.get_json()
+
+    meal = Meal.query.get(meal_id)
+    if not meal:
+        return jsonify({'erro': 'Refeição Não Encontrada'}), 404
+    
+    meal.name = data.get('name', meal.name )
+    meal.description = data.get('description', meal.description)
+    meal.date = data.get('date', meal.date)  
+    meal.dentro_da_dieta = data.get('dentro_da_dieta', meal.dentro_da_dieta)
+    
+    db.session.commit()
+
+    return jsonify({'message': 'Refeição Atualizada'})
 
 
 if __name__ == "__main__":
