@@ -152,6 +152,57 @@ def edit_meal(meal_id):
     return jsonify({'message': 'Refeição Atualizada'})
 
 
+@app.route('/edit_meal/<int:meal_id>', methods=['DELETE'])
+@login_required
+def delete_meal(meal_id):
+    meal = Meal.query.get(meal_id)
+
+    if meal:
+        db.session.delete(meal)
+        db.session.commit()
+        return jsonify({"message": f"Refeição {meal_id} deletada com sucesso"})
+    
+
+@app.route('/meal/<int:meal_id>', methods=['GET'])
+def read_meal(meal_id):
+    meal = Meal.query.get(meal_id)
+
+    if meal:
+        return {
+            "Refeição": meal.name,
+            "Descrição": meal.description,
+            "Data": meal.date,
+            "Usuario": meal.user_id
+            }
+    
+    return jsonify({"message":"Refeição não encontrada"})
+
+
+@app.route('/meal/<int:id_user>/meals', methods=['GET'])
+@login_required
+def get_user_meals(id_user):
+    if current_user.id != id_user and current_user.role != "admin":
+        return jsonify({"message": "Acesso negado"}), 403
+
+    user = User.query.get(id_user)
+    if not user:
+        return jsonify({"message": "Usuário não encontrado"}), 404
+
+    meals = [
+        {
+            "id": meal.id,
+            "name": meal.name,
+            "description": meal.description,
+            "date": meal.date.strftime('%Y-%m-%d'),
+            "dentro_da_dieta": meal.dentro_da_dieta
+        }
+        for meal in user.meals
+    ]
+
+    return jsonify(meals)
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 

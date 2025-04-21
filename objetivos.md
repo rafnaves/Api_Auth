@@ -4,8 +4,8 @@
     - Data e Hora
     - Está ou não dentro da dieta
 
-- Edição de refeição
-- Deleção de refeição
-- Listagem de refeições
-- Vizualizar uma única refeição
-- As informações devem ser salvas em um banco de dados
+- Edição de refeição X
+- Deleção de refeição X
+- Listagem de refeições X
+- Vizualizar uma única refeição 
+- As informações devem ser salvas em um banco de dados X
